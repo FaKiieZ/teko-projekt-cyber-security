@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-8 font-sans">
+  <div class="w-full max-w-2xl bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+    
+    <!-- Header -->
+    <div class="px-8 pt-10 pb-6 text-center">
+      <div class="inline-flex items-center justify-center w-12 h-12 bg-indigo-600 rounded-xl mb-4 shadow-lg shadow-indigo-200">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl font-semibold text-slate-900 tracking-tight">Identity Access Manager</h1>
+      <p class="text-slate-500 mt-2 text-sm">Secure school infrastructure authentication demo.</p>
+    </div>
+
+    <div class="px-8 pb-10">
+      <!-- Logged Out State -->
+      <div *ngIf="!keycloak.isLoggedIn" class="space-y-8 animate-in fade-in duration-500">
+        <div class="flex flex-col items-center">
+          <button (click)="login()" 
+                  class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-10 rounded-xl transition-all active:scale-[0.98] shadow-sm">
+            Sign in with Keycloak
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Student Access</p>
+            <p class="text-sm font-medium text-slate-700">alice / <span class="text-indigo-600">alice</span></p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Admin Access</p>
+            <p class="text-sm font-medium text-slate-700">bob / <span class="text-indigo-600">bob</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logged In State -->
+      <div *ngIf="keycloak.isLoggedIn" class="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+        
+        <!-- Profile Card -->
+        <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+          <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-lg">
+            {{ keycloak.profile?.firstName?.charAt(0) }}{{ keycloak.profile?.lastName?.charAt(0) }}
+          </div>
+          <div>
+            <h2 class="font-semibold text-slate-900">{{ keycloak.profile?.firstName }} {{ keycloak.profile?.lastName }}</h2>
+            <p class="text-xs text-slate-500">{{ keycloak.profile?.email }}</p>
+          </div>
+        </div>
+
+        <!-- Roles Section -->
+        <div>
+          <h3 class="text-xs uppercase tracking-wider font-bold text-slate-400 mb-3">Your Permissions</h3>
+          <div class="flex flex-wrap gap-2">
+            <span *ngFor="let role of keycloak.roles" 
+                  class="px-3 py-1 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-medium shadow-sm">
+              {{ role }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Conditional Content -->
+        <div class="pt-2">
+          <!-- Admin View -->
+          <div *ngIf="keycloak.hasRole('admin')" 
+               class="p-6 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-100 relative overflow-hidden">
+            <div class="relative z-10">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-4 h-4 text-indigo-200" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 4.908-3.341 9.034-7.892 10.26a1.288 1.288 0 01-.216.039l-.014.002-.014-.002a1.288 1.288 0 01-.216-.039C5.34 16.035 2 11.91 2 7.001c0-.681.056-1.35.166-2.002zm7.5 4.74l-.242 1.453a.75.75 0 001.152.755l1.02-.612 1.02.612a.75.75 0 001.152-.755L12.5 9.74l.97-.97a.75.75 0 00-.416-1.28l1.32-.192-1.32-.191a.75.75 0 00.416-1.281l-.97-.97.242-1.453a.75.75 0 00-1.152-.755L10 3.398l-1.02-.612a.75.75 0 00-1.152.755l.242 1.453-.97.97a.75.75 0 00.416 1.28l1.32.192-1.32.191a.75.75 0 00-.416 1.281l.97.97z" clip-rule="evenodd" />
+                </svg>
+                <h4 class="text-sm font-bold uppercase tracking-widest">Admin Terminal</h4>
+              </div>
+              <p class="text-indigo-100 text-sm leading-relaxed">System-wide administrative privileges active. You can manage users, modify security protocols, and audit logs.</p>
+            </div>
+            <!-- Decorative circle -->
+            <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-indigo-500 rounded-full opacity-20"></div>
+          </div>
+
+          <!-- Student View -->
+          <div *ngIf="!keycloak.hasRole('admin')" 
+               class="p-6 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-900">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                  <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold uppercase tracking-wider">Student Dashboard</h4>
+                <p class="text-emerald-700 text-xs mt-0.5">Welcome back to the learning portal.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="pt-6 border-t border-slate-100 flex justify-between items-center">
+          <p class="text-[10px] text-slate-400 font-medium italic">Authenticated session active</p>
+          <button (click)="logout()" 
+                  class="text-xs font-semibold text-slate-400 hover:text-red-500 transition-colors py-2 px-4">
+            Sign out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
