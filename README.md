@@ -8,12 +8,14 @@ Dieses Projekt demonstriert, wie ein **Identity and Access Management
 
 - `/keycloak`: Enthält das Docker-Compose Setup sowie die
   Realm-Import-Konfiguration.
-- `/frontend`: Eine Angular-19-Anwendung mit Keycloak-Integration und
+- `/frontend`: Eine Angular-21-Anwendung mit Keycloak-Integration und
   Styling mit Tailwind CSS v4.
 
 ## Voraussetzungen
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- Docker
+  - Windows: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+  - Linux: [Docker](https://docs.docker.com/engine/install/)
 - [Node.js](https://nodejs.org/) (Version 18 oder höher)
 - npm (wird mit Node.js installiert)
 
@@ -26,10 +28,11 @@ Realm, ein Client und Demo-Benutzer erstellt werden.
 
 ### Service starten
 
-Im Root-Verzeichnis ausführen:
+In das Keycloak-Verzeichnis wechseln und docker compose ausführen:
 
 ```bash
-docker compose -f keycloak/docker-compose.yaml up -d
+cd keycloak
+docker compose up -d
 ```
 
 ### Zugriff auf Keycloak
@@ -42,7 +45,7 @@ docker compose -f keycloak/docker-compose.yaml up -d
 
 ## 2. Angular-Anwendung einrichten
 
-Das Frontend wurde mit Angular 19 erstellt und verwendet `keycloak-js`
+Das Frontend wurde mit Angular 21 erstellt und verwendet `keycloak-js`
 für die Authentifizierung.
 
 ### Installation

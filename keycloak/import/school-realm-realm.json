@@ -16,16 +16,12 @@
   },
   "clients": [
     {
-      "clientId": "school-frontend",
+      "clientId": "demo-frontend",
       "enabled": true,
       "publicClient": true,
-      "redirectUris": [
-        "http://localhost:4200/*"
-      ],
-      "webOrigins": [
-        "*"
-      ],
-      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:4200/*"],
+      "webOrigins": ["*"],
+      "directAccessGrantsEnabled": false,
       "standardFlowEnabled": true
     }
   ],
@@ -43,9 +39,7 @@
           "temporary": false
         }
       ],
-      "realmRoles": [
-        "user"
-      ]
+      "realmRoles": ["user"]
     },
     {
       "username": "bob",
@@ -60,10 +54,7 @@
           "temporary": false
         }
       ],
-      "realmRoles": [
-        "admin",
-        "user"
-      ]
+      "realmRoles": ["admin", "user"]
     }
   ]
 }
