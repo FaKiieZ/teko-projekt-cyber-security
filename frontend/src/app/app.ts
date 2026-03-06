@@ -1,4 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   KEYCLOAK_EVENT_SIGNAL,
   KeycloakEventType,
@@ -9,6 +10,7 @@ import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-root',
+  imports: [FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -17,6 +19,10 @@ export class App {
 
   protected authenticated = signal(false);
   protected userInfo = signal<any>(null);
+  protected isAdmin = signal(false);
+
+  protected status = signal(localStorage.getItem('global_status') || 'Willkommen zum TEKO Security Portal!');
+  protected newStatus = signal(this.status());
 
   constructor() {
     const keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL);
@@ -39,8 +45,10 @@ export class App {
       if (this.authenticated()) {
         const profile = this.keycloak.idTokenParsed ?? null;
         this.userInfo.set(profile);
+        this.isAdmin.set(this.keycloak.hasRealmRole('admin'));
       } else {
         this.userInfo.set(null);
+        this.isAdmin.set(false);
       }
     });
   }
@@ -51,5 +59,13 @@ export class App {
 
   logout(): void {
     this.keycloak.logout();
+  }
+
+  updateStatus(): void {
+    if (this.isAdmin()) {
+      const updatedValue = this.newStatus();
+      this.status.set(updatedValue);
+      localStorage.setItem('global_status', updatedValue);
+    }
   }
 }
