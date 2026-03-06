@@ -2,6 +2,9 @@
   "id": "school-realm",
   "realm": "school-realm",
   "enabled": true,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
   "roles": {
     "realm": [
       {
