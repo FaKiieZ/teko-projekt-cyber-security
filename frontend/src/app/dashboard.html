@@ -1,0 +1,163 @@
+<div class="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 gap-6">
+  @if (authenticated()) {
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 w-full max-w-md">
+      <div class="flex items-center gap-3 mb-3 text-slate-500">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-5 h-5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+          />
+        </svg>
+        <span class="text-sm font-medium uppercase tracking-wider">Aktueller Status</span>
+      </div>
+      <p class="text-slate-800 text-lg italic leading-relaxed">"{{ status() }}"</p>
+    </div>
+  }
+
+  <div
+    class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 w-full max-w-md text-center"
+  >
+    @if (authenticated()) {
+      <div class="mb-6">
+        <div
+          class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-8 h-8"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+            />
+          </svg>
+        </div>
+        <h2 class="text-xl font-semibold text-slate-800">Willkommen zurück!</h2>
+        <p class="text-slate-500 mt-1">
+          Angemeldet als
+          <span class="font-medium text-slate-900">{{
+            userInfo()?.preferred_username || 'Benutzer'
+          }}</span>
+        </p>
+
+        @if (isAdmin()) {
+          <span
+            class="mt-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 uppercase"
+            >Administrator</span
+          >
+        }
+      </div>
+
+      @if (isAdmin()) {
+        <div class="mt-6 pt-6 border-t border-slate-100 text-left space-y-6">
+          <button
+            routerLink="/secret-admin"
+            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-200 flex items-center justify-center gap-2 border-2 border-red-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z"
+              />
+            </svg>
+            ZUM GEHEIMEN ADMIN-BEREICH
+          </button>
+
+          <div>
+            <label for="status-input" class="block text-sm font-medium text-slate-700 mb-2"
+              >Status aktualisieren</label
+            >
+            <textarea
+              id="status-input"
+              [(ngModel)]="newStatus"
+              class="w-full rounded-lg border-slate-200 border p-3 text-sm focus:ring-blue-500 focus:border-blue-500 outline-hidden bg-slate-50 mb-3"
+              rows="3"
+              placeholder="Neuen Status eingeben..."
+            ></textarea>
+            <button
+              (click)="updateStatus()"
+              class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded-lg transition duration-200 text-sm"
+            >
+              Status veröffentlichen
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="mt-8 border-t border-slate-100 pt-6">
+        <button
+          (click)="logout()"
+          class="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
+            />
+          </svg>
+          Abmelden
+        </button>
+      </div>
+    } @else {
+      <div class="mb-8">
+        <div
+          class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-8 h-8"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+            />
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-slate-900">TEKO Security Portal</h1>
+        <p class="text-slate-500 mt-2">
+          Bitte melden Sie sich an, um auf Ihre Inhalte zuzugreifen.
+        </p>
+      </div>
+      <button
+        (click)="login()"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center gap-2"
+      >
+        Anmelden
+      </button>
+    }
+  </div>
+</div>
