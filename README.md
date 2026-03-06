@@ -1,118 +1,74 @@
 # IAM System -- Keycloak & Angular Demo
 
-Dieses Projekt demonstriert, wie ein **Identity and Access Management
-(IAM)** System mit **Keycloak** als Identity Provider und einer
-**Angular** Anwendung als Client implementiert werden kann.
+Dieses Projekt demonstriert die Implementierung eines **Identity and Access Management (IAM)** Systems. Es nutzt **Keycloak** als Identity Provider und eine **Angular 21** Anwendung als Client, um moderne Authentifizierungs- und Autorisierungsmuster zu zeigen.
 
 ## Projektstruktur
 
-- `/keycloak`: Enthält das Docker-Compose Setup sowie die
-  Realm-Import-Konfiguration.
-- `/frontend`: Eine Angular-21-Anwendung mit Keycloak-Integration und
-  Styling mit Tailwind CSS v4.
+- `/keycloak`: Docker-Compose Setup und Realm-Import-Konfiguration (`school-realm`).
+- `/frontend`: Angular-21-Anwendung mit `keycloak-angular` Integration und Tailwind CSS v4 Styling.
 
 ## Voraussetzungen
 
-- Docker
-  - Windows: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-  - Linux: [Docker](https://docs.docker.com/engine/install/)
-- [Node.js](https://nodejs.org/) (Version 18 oder höher)
-- npm (wird mit Node.js installiert)
+- **Docker** (Desktop oder Engine)
+- **Node.js** (^20.19.0 || ^22.12.0 || ^24.0.0) & **npm**
 
 ---
 
-## 1. Keycloak (IAM) einrichten
+## 1. Keycloak (IAM) starten
 
-Das IAM-System ist so vorkonfiguriert, dass beim Start automatisch ein
-Realm, ein Client und Demo-Benutzer erstellt werden.
-
-### Service starten
-
-In das Keycloak-Verzeichnis wechseln und docker compose ausführen:
+Das System ist vorkonfiguriert (`school-realm.json`), sodass beim Start automatisch der Realm, der Client und Demo-Benutzer erstellt werden.
 
 ```bash
 cd keycloak
 docker compose up -d
 ```
 
-### Zugriff auf Keycloak
-
-- **Admin-Konsole:** http://localhost:8080
-- **Admin-Zugangsdaten:** `admin` / `admin`
+- **Admin-Konsole:** http://localhost:8080 (Login: `admin` / `admin`)
 - **Realm:** `school-realm`
+- **Client ID:** `demo-frontend`
 
 ---
 
-## 2. Angular-Anwendung einrichten
-
-Das Frontend wurde mit Angular 21 erstellt und verwendet `keycloak-js`
-für die Authentifizierung.
-
-### Installation
-
-In das Frontend-Verzeichnis wechseln und die Abhängigkeiten
-installieren:
+## 2. Frontend starten
 
 ```bash
 cd frontend
 npm install
-```
-
-### Anwendung starten
-
-```bash
 npm start
 ```
 
-Die Anwendung ist anschliessend unter http://localhost:4200 erreichbar.
+Die Anwendung ist unter **http://localhost:4200** erreichbar.
 
 ---
 
-## 3. Demo-Accounts
+## 3. Demo-Szenarien & Features
 
-Mit folgenden vorkonfigurierten Accounts kann das **Role-Based Access Control (RBAC)** getestet werden:
+Das Projekt demonstriert folgende Kernkonzepte der Cyber Security:
 
-| Benutzername | Passwort | Rollen          | Anwendungsfall                   |
-| ------------ | -------- | --------------- | -------------------------------- |
-| **alice**    | alice    | `user`          | Standard-Studentenansicht        |
-| **bob**      | bob      | `admin`, `user` | Admin-Ansicht mit Secret-Zugriff |
+### 🔐 Authentifizierung (OIDC/OAuth 2.0)
 
-## Demonstrierte Funktionen
+- **Single Sign-On (SSO):** Zentrale Anmeldung über Keycloak.
+- **Silent Check-SSO:** Die Anwendung prüft beim Laden im Hintergrund die Session, ohne die UX zu unterbrechen.
+- **Identity Propagation:** Benutzerprofile (Name, E-Mail) werden sicher aus dem ID-Token extrahiert.
 
-### Single Sign-On (SSO)
+### 🛡️ Autorisierung (RBAC)
 
-Benutzer melden sich einmal über Keycloak an und sind danach in der
-gesamten Anwendung authentifiziert.
+Zwei vorkonfigurierten Accounts demonstrieren die Rollenverteilung:
 
-### Silent Check-SSO
+| Benutzer  | Passwort | Rollen          | Berechtigungen                                                   |
+| :-------- | :------- | :-------------- | :--------------------------------------------------------------- |
+| **alice** | `alice`  | `user`          | Kann den globalen Status sehen.                                  |
+| **bob**   | `bob`    | `admin`, `user` | Kann Status ändern & hat Zugriff auf den "Secret Admin"-Bereich. |
 
-Beim Laden der Seite wird im Hintergrund geprüft, ob bereits eine
-bestehende Session vorhanden ist.
+### 🚀 Implementierte Funktionen
 
-### Identity Propagation
-
-Benutzerinformationen (Name, E-Mail, Benutzername) werden direkt aus dem
-IAM-System geladen.
-
-### Role-Based Access Control (RBAC)
-
-UI-Elemente werden abhängig von den in Keycloak vergebenen Rollen
-angezeigt.
-
-- Benutzer mit der Rolle `admin` sehen den Bereich **"Admin Secret
-  Access"**
-- Normale Benutzer sehen die **"Student View"**
-
-### Zentrale Benutzerverwaltung
-
-Benutzer, Passwörter und Rollen werden vollständig in Keycloak
-verwaltet und nicht im Anwendungscode.
+- **Globaler Status:** Eine für alle sichtbare Nachricht, die nur von Administratoren geändert werden kann (simulierte Persistenz via `localStorage`).
+- **Secret Admin Area:** Eine dedizierte Route (`/secret-admin`), die durch einen **Angular Functional Guard** geschützt ist. Nur Benutzer mit der Realm-Rolle `admin` können diese betreten.
+- **Fehlerbehandlung:** Unbefugte Zugriffsversuche auf geschützte Routen führen zu einer automatischen Umleitung auf das Dashboard.
 
 ---
 
-## Sicherheitshinweise
+## Sicherheitshinweis
 
-- Dieses Setup verwendet den **Keycloak `start-dev` Modus** und ist
-  **nur für Demonstrations- oder Schulprojekte gedacht**.
-- In einer Produktionsumgebung sollte immer **HTTPS verwendet werden**
-  und **Zugangsdaten niemals im Klartext gespeichert werden**.
+- Das Projekt nutzt den **Keycloak `start-dev` Modus** (HTTP) und dient ausschließlich **Schulungs- und Demonstrationszwecken**.
+- In produktiven Umgebungen ist **HTTPS** zwingend erforderlich und Client-Secrets sollten (bei Confidential Clients) niemals im Frontend exponiert werden.
