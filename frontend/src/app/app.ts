@@ -1,5 +1,4 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import {
   KEYCLOAK_EVENT_SIGNAL,
   KeycloakEventType,
@@ -10,7 +9,6 @@ import Keycloak from 'keycloak-js';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
