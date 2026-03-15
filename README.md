@@ -1,4 +1,4 @@
-# IAM System -- Keycloak & Angular Demo
+# IAM System - Keycloak & Angular Demo
 
 Dieses Projekt demonstriert die Implementierung eines **Identity and Access Management (IAM)** Systems. Es nutzt **Keycloak** als Identity Provider und eine **Angular 21** Anwendung als Client, um moderne Authentifizierungs- und Autorisierungsmuster zu zeigen.
 
